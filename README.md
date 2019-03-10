@@ -1,8 +1,7 @@
 # Training 01 - Negative Reward For Distance-from-center
 
 ```python
-    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
-                        throttle, steering, track_width, waypoints, closest_waypoints):
+    def reward_function(...):
         
         if not on_track:
             print('not on track', on_track)
@@ -10,7 +9,6 @@
         
         print('default reward', -1 * distance_from_center)
         return -1 * distance_from_center
-        
 ```
 
 |      | Episode # | Training Iter | In Heatup | ER #Transitions | ER #Episodes | Episode Length | Total steps | Epsilon | Shaped Training Reward | Training Reward | ...  | KL Divergence/Max | KL Divergence/Min | Likelihood Ratio/Mean | Likelihood Ratio/Stdev | Likelihood Ratio/Max | Likelihood Ratio/Min | Clipped Likelihood Ratio/Mean | Clipped Likelihood Ratio/Stdev | Clipped Likelihood Ratio/Max | Clipped Likelihood Ratio/Min |
@@ -718,19 +716,206 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 # Train 02 - Zero Reward
 
 ```
-    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
-                        throttle, steering, track_width, waypoints, closest_waypoints):
-        
-        print('[Anderson] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5}'.format(
-               on_track, x, y, distance_from_center, progress, steps))
+    def reward_function(...):
         return 0
 ```
 
 ```
-[Anderson] on_track:True | xy:2.53,0.68 | dist:0.10000000000000003 | progress:0.0 | steps:23
-
-16:06:09
+[Anderson] on_track:True | xy:2.0,0.59 | dist:0.009999999999999953 | progress:0.0 | steps:0
+[Anderson] on_track:True | xy:2.01,0.59 | dist:0.009999999999999953 | progress:0.0 | steps:1
+[Anderson] on_track:True | xy:2.04,0.59 | dist:0.009999999999999953 | progress:0.0 | steps:2
+[Anderson] on_track:True | xy:2.07,0.58 | dist:5.551115123125783e-17 | progress:0.0 | steps:3
+[Anderson] on_track:True | xy:2.09,0.58 | dist:5.551115123125783e-17 | progress:0.0 | steps:4
+[Anderson] on_track:True | xy:2.11,0.57 | dist:0.010000000000000064 | progress:0.0 | steps:5
+[Anderson] on_track:True | xy:2.13,0.56 | dist:0.019999999999999962 | progress:0.0 | steps:6
+[Anderson] on_track:True | xy:2.16,0.55 | dist:0.02999999999999997 | progress:0.0 | steps:7
+[Anderson] on_track:True | xy:2.19,0.54 | dist:0.03999999999999998 | progress:0.0 | steps:8
+[Anderson] on_track:True | xy:2.21,0.54 | dist:0.03999999999999998 | progress:0.0 | steps:9
+[Anderson] on_track:True | xy:2.24,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:10
+[Anderson] on_track:True | xy:2.26,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:11
+[Anderson] on_track:True | xy:2.28,0.52 | dist:0.06 | progress:0.0 | steps:12
+[Anderson] on_track:True | xy:2.31,0.51 | dist:0.07 | progress:0.0 | steps:13
+[Anderson] on_track:True | xy:2.33,0.51 | dist:0.07 | progress:0.0 | steps:14
+[Anderson] on_track:True | xy:2.36,0.5 | dist:0.08000000000000002 | progress:0.0 | steps:15
+[Anderson] on_track:True | xy:2.38,0.49 | dist:0.09000000000000002 | progress:0.0 | steps:16
+[Anderson] on_track:True | xy:2.41,0.48 | dist:0.10000000000000003 | progress:0.0 | steps:17
+[Anderson] on_track:True | xy:2.44,0.48 | dist:0.10000000000000003 | progress:0.0 | steps:18
+[Anderson] on_track:True | xy:2.47,0.48 | dist:0.10000000000000003 | progress:0.0 | steps:19
+[Anderson] on_track:True | xy:2.5,0.49 | dist:0.09000000000000002 | progress:0.0 | steps:20
+[Anderson] on_track:True | xy:2.52,0.49 | dist:0.09000000000000002 | progress:0.0 | steps:21
+[Anderson] on_track:True | xy:2.54,0.49 | dist:0.09000000000000002 | progress:0.0 | steps:22
+[Anderson] on_track:True | xy:2.56,0.5 | dist:0.08000000000000002 | progress:0.0 | steps:23
+[Anderson] on_track:True | xy:2.59,0.5 | dist:0.08000000000000002 | progress:0.0 | steps:24
+[Anderson] on_track:True | xy:2.62,0.51 | dist:0.07 | progress:0.0 | steps:25
+[Anderson] on_track:True | xy:2.64,0.52 | dist:0.06 | progress:0.0 | steps:26
+[Anderson] on_track:True | xy:2.66,0.52 | dist:0.06 | progress:0.0 | steps:27
+[Anderson] on_track:True | xy:2.69,0.52 | dist:0.06 | progress:0.0 | steps:28
+[Anderson] on_track:True | xy:2.71,0.52 | dist:0.06 | progress:0.0 | steps:29
+[Anderson] on_track:True | xy:2.74,0.52 | dist:0.06 | progress:0.0 | steps:30
+[Anderson] on_track:True | xy:2.77,0.52 | dist:0.06 | progress:0.0 | steps:31
+[Anderson] on_track:True | xy:2.79,0.52 | dist:0.06 | progress:0.0 | steps:32
+[Anderson] on_track:True | xy:2.82,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:33
+[Anderson] on_track:True | xy:2.85,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:34
+[Anderson] on_track:True | xy:2.86,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:35
+[Anderson] on_track:True | xy:2.88,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:36
+[Anderson] on_track:True | xy:2.9,0.54 | dist:0.03999999999999998 | progress:0.0 | steps:37
+[Anderson] on_track:True | xy:2.93,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:38
+[Anderson] on_track:True | xy:2.96,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:39
+[Anderson] on_track:True | xy:2.98,0.53 | dist:0.04999999999999999 | progress:0.0 | steps:40
+[Anderson] on_track:True | xy:3.01,0.52 | dist:0.06 | progress:0.0 | steps:41
+[Anderson] on_track:True | xy:3.04,0.52 | dist:0.06 | progress:0.0 | steps:42
+[Anderson] on_track:True | xy:3.07,0.52 | dist:0.06 | progress:0.0 | steps:43
+[Anderson] on_track:True | xy:3.08,0.52 | dist:0.06 | progress:0.0 | steps:44
+[Anderson] on_track:True | xy:3.11,0.52 | dist:0.06 | progress:0.0 | steps:45
+[Anderson] on_track:True | xy:3.13,0.52 | dist:0.06 | progress:0.0 | steps:46
+[Anderson] on_track:True | xy:3.16,0.52 | dist:0.06 | progress:0.0 | steps:47
+[Anderson] on_track:True | xy:3.19,0.52 | dist:0.06 | progress:0.0 | steps:48
+[Anderson] on_track:True | xy:3.22,0.51 | dist:0.07 | progress:0.0 | steps:49
+[Anderson] on_track:True | xy:3.24,0.5 | dist:0.08000000000000002 | progress:0.0 | steps:50
+[Anderson] on_track:True | xy:3.27,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:51
+[Anderson] on_track:True | xy:3.3,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:52
+[Anderson] on_track:True | xy:3.32,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:53
+[Anderson] on_track:True | xy:3.34,0.49 | dist:0.09000000000000002 | progress:19.564971469680643 | steps:54
+[Anderson] on_track:True | xy:3.35,0.49 | dist:0.09000000000000002 | progress:19.564971469680643 | steps:55
+[Anderson] on_track:True | xy:3.38,0.49 | dist:0.09000000000000002 | progress:19.564971469680643 | steps:56
+[Anderson] on_track:True | xy:3.41,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:57
+[Anderson] on_track:True | xy:3.43,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:58
+[Anderson] on_track:True | xy:3.46,0.5 | dist:0.08000000000000002 | progress:19.564971469680643 | steps:59
+[Anderson] on_track:True | xy:3.49,0.5 | dist:0.08000000000000002 | progress:21.005398226431268 | steps:60
+[Anderson] on_track:True | xy:3.52,0.51 | dist:0.07 | progress:21.005398226431268 | steps:61
+[Anderson] on_track:True | xy:3.54,0.52 | dist:0.06 | progress:21.005398226431268 | steps:62
+[Anderson] on_track:True | xy:3.57,0.53 | dist:0.04999999999999999 | progress:21.005398226431268 | steps:63
+[Anderson] on_track:True | xy:3.58,0.53 | dist:0.04999999999999999 | progress:21.005398226431268 | steps:64
+[Anderson] on_track:True | xy:3.61,0.54 | dist:0.03999999999999998 | progress:21.005398226431268 | steps:65
+[Anderson] on_track:True | xy:3.64,0.54 | dist:0.03999999999999998 | progress:21.005398226431268 | steps:66
+[Anderson] on_track:True | xy:3.66,0.54 | dist:0.03999999999999998 | progress:21.005398226431268 | steps:67
+[Anderson] on_track:True | xy:3.69,0.54 | dist:0.03999999999999998 | progress:21.005398226431268 | steps:68
+[Anderson] on_track:True | xy:3.72,0.55 | dist:0.02999999999999997 | progress:21.005398226431268 | steps:69
+[Anderson] on_track:True | xy:3.75,0.55 | dist:0.02999999999999997 | progress:21.005398226431268 | steps:70
+[Anderson] on_track:True | xy:3.76,0.56 | dist:0.019999999999999962 | progress:21.005398226431268 | steps:71
+[Anderson] on_track:True | xy:3.78,0.56 | dist:0.019999999999999962 | progress:21.005398226431268 | steps:72
+[Anderson] on_track:True | xy:3.8,0.56 | dist:0.019999999999999962 | progress:21.005398226431268 | steps:73
+[Anderson] on_track:True | xy:3.83,0.57 | dist:0.010000000000000064 | progress:21.005398226431268 | steps:74
+[Anderson] on_track:True | xy:3.85,0.57 | dist:0.010000000000000064 | progress:21.005398226431268 | steps:75
+[Anderson] on_track:True | xy:3.88,0.58 | dist:5.551115123125783e-17 | progress:21.005398226431268 | steps:76
+[Anderson] on_track:True | xy:3.91,0.58 | dist:5.551115123125783e-17 | progress:21.005398226431268 | steps:77
+[Anderson] on_track:True | xy:3.93,0.58 | dist:5.551115123125783e-17 | progress:21.005398226431268 | steps:78
+[Anderson] on_track:True | xy:3.95,0.58 | dist:5.551115123125783e-17 | progress:21.005398226431268 | steps:79
+[Anderson] on_track:True | xy:3.98,0.57 | dist:0.010000000000000064 | progress:21.005398226431268 | steps:80
+[Anderson] on_track:True | xy:4.0,0.56 | dist:0.019999999999999962 | progress:21.005398226431268 | steps:81
+[Anderson] on_track:True | xy:4.02,0.56 | dist:0.019999999999999962 | progress:21.005398226431268 | steps:82
+[Anderson] on_track:True | xy:4.05,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:83
+[Anderson] on_track:True | xy:4.08,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:84
+[Anderson] on_track:True | xy:4.1,0.57 | dist:0.010000000000000064 | progress:33.97820411156421 | steps:85
+[Anderson] on_track:True | xy:4.13,0.57 | dist:0.010000000000000064 | progress:33.97820411156421 | steps:86
+[Anderson] on_track:True | xy:4.16,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:87
+[Anderson] on_track:True | xy:4.19,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:88
+[Anderson] on_track:True | xy:4.21,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:89
+[Anderson] on_track:True | xy:4.24,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:90
+[Anderson] on_track:True | xy:4.27,0.56 | dist:0.019999999999999962 | progress:33.97820411156421 | steps:91
+[Anderson] on_track:True | xy:4.3,0.55 | dist:0.02999999999999997 | progress:33.97820411156421 | steps:92
+[Anderson] on_track:True | xy:4.32,0.55 | dist:0.02999999999999997 | progress:33.97820411156421 | steps:93
+[Anderson] on_track:True | xy:4.35,0.55 | dist:0.02999999999999997 | progress:33.97820411156421 | steps:94
+[Anderson] on_track:True | xy:4.38,0.54 | dist:0.03999999999999998 | progress:33.97820411156421 | steps:95
+[Anderson] on_track:True | xy:4.41,0.54 | dist:0.03999999999999998 | progress:33.97820411156421 | steps:96
+[Anderson] on_track:True | xy:4.43,0.53 | dist:0.04999999999999999 | progress:33.97820411156421 | steps:97
+[Anderson] on_track:True | xy:4.46,0.52 | dist:0.06 | progress:33.97820411156421 | steps:98
+[Anderson] on_track:True | xy:4.49,0.52 | dist:0.06 | progress:33.97820411156421 | steps:99
+[Anderson] on_track:True | xy:4.5,0.52 | dist:0.06 | progress:33.97820411156421 | steps:100
+[Anderson] on_track:True | xy:4.53,0.51 | dist:0.07 | progress:33.97820411156421 | steps:101
+[Anderson] on_track:True | xy:4.55,0.51 | dist:0.07 | progress:33.97820411156421 | steps:102
+[Anderson] on_track:True | xy:4.58,0.51 | dist:0.07 | progress:33.97820411156421 | steps:103
+[Anderson] on_track:True | xy:4.61,0.52 | dist:0.06 | progress:33.97820411156421 | steps:104
+[Anderson] on_track:True | xy:4.64,0.51 | dist:0.07 | progress:33.97820411156421 | steps:105
+[Anderson] on_track:True | xy:4.67,0.51 | dist:0.07 | progress:33.97820411156421 | steps:106
+[Anderson] on_track:True | xy:4.69,0.51 | dist:0.07 | progress:33.97820411156421 | steps:107
+[Anderson] on_track:True | xy:4.72,0.51 | dist:0.07 | progress:33.97820411156421 | steps:108
+[Anderson] on_track:True | xy:4.75,0.51 | dist:0.07 | progress:33.97820411156421 | steps:109
+[Anderson] on_track:True | xy:4.77,0.51 | dist:0.07 | progress:33.97820411156421 | steps:110
+[Anderson] on_track:True | xy:4.79,0.51 | dist:0.07 | progress:33.97820411156421 | steps:111
+[Anderson] on_track:True | xy:4.82,0.51 | dist:0.07 | progress:33.97820411156421 | steps:112
+[Anderson] on_track:True | xy:4.85,0.51 | dist:0.07 | progress:33.97820411156421 | steps:113
+[Anderson] on_track:True | xy:4.87,0.51 | dist:0.07 | progress:33.97820411156421 | steps:114
+[Anderson] on_track:True | xy:4.89,0.5 | dist:0.08000000000000002 | progress:33.97820411156421 | steps:115
+[Anderson] on_track:True | xy:4.92,0.5 | dist:0.08000000000000002 | progress:33.97820411156421 | steps:116
+[Anderson] on_track:True | xy:4.95,0.49 | dist:0.09000000000000002 | progress:33.97820411156421 | steps:117
+[Anderson] on_track:True | xy:4.97,0.49 | dist:0.09000000000000002 | progress:33.97820411156421 | steps:118
+[Anderson] on_track:True | xy:5.0,0.49 | dist:0.09000000000000002 | progress:33.97820411156421 | steps:119
+[Anderson] on_track:True | xy:5.03,0.48 | dist:0.10000000000000003 | progress:33.97820411156421 | steps:120
+[Anderson] on_track:True | xy:5.06,0.47 | dist:0.11000000000000004 | progress:33.97820411156421 | steps:121
+[Anderson] on_track:True | xy:5.08,0.46 | dist:0.12 | progress:33.97820411156421 | steps:122
+[Anderson] on_track:True | xy:5.1,0.45 | dist:0.13 | progress:33.97820411156421 | steps:123
+[Anderson] on_track:True | xy:5.11,0.45 | dist:0.13 | progress:33.97820411156421 | steps:124
+[Anderson] on_track:True | xy:5.14,0.44 | dist:0.14 | progress:33.97820411156421 | steps:125
+[Anderson] on_track:True | xy:5.17,0.43 | dist:0.15000000000000002 | progress:33.97820411156421 | steps:126
+[Anderson] on_track:True | xy:5.18,0.43 | dist:0.15000000000000002 | progress:33.97820411156421 | steps:127
+[Anderson] on_track:True | xy:5.2,0.43 | dist:0.15000000000000002 | progress:33.97820411156421 | steps:128
+[Anderson] on_track:True | xy:5.22,0.43 | dist:0.15000000000000002 | progress:33.97820411156421 | steps:129
+[Anderson] on_track:True | xy:5.24,0.42 | dist:0.16000000000000003 | progress:33.97820411156421 | steps:130
+[Anderson] on_track:True | xy:5.26,0.42 | dist:0.16000000000000003 | progress:33.97820411156421 | steps:131
+[Anderson] on_track:True | xy:5.29,0.42 | dist:0.11570851973152929 | progress:33.97820411156421 | steps:132
+[Anderson] on_track:True | xy:5.31,0.41 | dist:0.12943664919120507 | progress:33.97820411156421 | steps:133
+[Anderson] on_track:True | xy:5.34,0.41 | dist:0.13532013324534997 | progress:33.97820411156421 | steps:134
+[Anderson] on_track:True | xy:5.36,0.41 | dist:0.13924245594811321 | progress:33.97820411156421 | steps:135
+[Anderson] on_track:True | xy:5.38,0.4 | dist:0.08049844718999512 | progress:33.97820411156421 | steps:136
+[Anderson] on_track:True | xy:5.4,0.4 | dist:0.08944271909999325 | progress:33.97820411156421 | steps:137
+[Anderson] on_track:True | xy:5.43,0.4 | dist:0.10285912696499244 | progress:33.97820411156421 | steps:138
+[Anderson] on_track:True | xy:5.45,0.39 | dist:0.12074767078499268 | progress:33.97820411156421 | steps:139
+[Anderson] on_track:True | xy:5.48,0.39 | dist:0.1341640786499879 | progress:33.97820411156421 | steps:140
+[Anderson] on_track:True | xy:5.51,0.39 | dist:0.1475804865149871 | progress:33.97820411156421 | steps:141
+[Anderson] on_track:True | xy:5.53,0.38 | dist:0.16546903033498733 | progress:33.97820411156421 | steps:142
+[Anderson] on_track:True | xy:5.56,0.38 | dist:0.1788854381999865 | progress:33.97820411156421 | steps:143
+[Anderson] on_track:True | xy:5.58,0.38 | dist:0.18782971010998464 | progress:33.97820411156421 | steps:144
+[Anderson] on_track:True | xy:5.6,0.37 | dist:0.21000000000000002 | progress:34.660148342021365 | steps:145
+[Anderson] on_track:True | xy:5.62,0.37 | dist:0.21000000000000002 | progress:34.660148342021365 | steps:146
+[Anderson] on_track:True | xy:5.65,0.37 | dist:0.21000000000000002 | progress:34.660148342021365 | steps:147
+[Anderson] on_track:True | xy:5.67,0.37 | dist:0.21000000000000002 | progress:34.660148342021365 | steps:148
+[Anderson] on_track:True | xy:5.7,0.37 | dist:0.21000000000000002 | progress:34.660148342021365 | steps:149
 
+
+```
+
+![](images/02-result.png)
+
+
+
+# Train 03
+
+```python
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        
+#         if distance_from_center >= 0.02 and distance_from_center <= 0.05:
+#             return -0.5
+#         elif distance_from_center >= 0.05:
+#             return -1
+
+        msg = '[Anderson] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:9} | clswp:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, waypoints, closest_waypoints)
+        
+        if not hasattr(self, '_max_progress'):
+            self._max_progress = 0
+           
+        if self._max_progress < progress:
+            print(msg, 'Max Progress')
+            self._max_progress = progress
+            return progress
+        
+        if progress >= 100:
+            print(msg, 'Done')
+            return 100
+        
+        if not on_track:
+            print(msg, 'NOT ON Track')
+            return -10
+        
+        if distance_from_center > 0.05:
+            print(msg, 'Distance From Center')
+            return -1
+        
+        print(msg, 'Default')
+        return 0
 ```
 
 
