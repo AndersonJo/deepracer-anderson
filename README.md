@@ -922,3 +922,36 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 
 
+# Train 04
+
+```
+    def reward_function(...):
+        
+        msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, len(waypoints), closest_waypoints)
+        
+        if not hasattr(self, '_max_progress'):
+            self._max_progress = 0
+           
+        if self._max_progress < progress:
+            print(msg, 'Max Progress')
+            self._max_progress = progress
+            return 1
+        
+        if not on_track:
+            print(msg, 'NOT ON Track')
+            return -2
+        
+        if distance_from_center > 0.05:
+            print(msg, 'Distance From Center')
+            return -1
+        
+        if throttle < 0.7 and progress > 5:
+            print(msg, 'Too Slow')
+            return -1
+        
+        print(msg, 'Default')
+        return 0
+```
+
