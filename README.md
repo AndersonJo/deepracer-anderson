@@ -88,7 +88,7 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 [Video 확인](data/03-validation.mp4)
 
-```
+```python
     def reward_function(...):
         msg = '[Anderson] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
                on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
@@ -132,7 +132,7 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 잘 안됨. 잘 안돌아감.
 
-```
+```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
                         throttle, steering, track_width, waypoints, closest_waypoints):
         
@@ -180,7 +180,7 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 # Train 06 
 
-```
+```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
                         throttle, steering, track_width, waypoints, closest_waypoints):
         
@@ -215,4 +215,12 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
         print(msg, 'Default')
         return 0
 ```
+
+![](images/06-result.png)
+
+![](images/06-track.png)
+
+![](images/06-statistic.png)
+
+![](images/06-action.png)
 
