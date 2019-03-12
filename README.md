@@ -124,10 +124,17 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 ![](images/04-statistic.png)
 
-# Train 05
+# Train 05 - Slow Speed & 180 Reward
+
+0.7보다 속도가 떨어질때마다 -1 reward를 주었음. 
+
+또한 progress가 180이상으로 갔을때만 reward 1 값을 주었음. 
+
+잘 안됨. 잘 안돌아감.
 
 ```
-    def reward_function(...):
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
         
         msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
                on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
@@ -135,11 +142,6 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
         
         if not hasattr(self, '_max_progress'):
             self._max_progress = 0
-           
-        if self._max_progress < progress:
-            print(msg, 'Max Progress')
-            self._max_progress = progress
-            return 1
         
         if not on_track:
             print(msg, 'NOT ON Track')
@@ -147,11 +149,68 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
         
         if distance_from_center > 0.05:
             print(msg, 'Distance From Center')
-            return -1
+            return -1-distance_from_center
         
         if throttle < 0.7 and progress > 5:
             print(msg, 'Too Slow')
             return -1
+        
+        if self._max_progress < progress:
+            print(msg, 'Max Progress')
+            self._max_progress = progress
+            return 1
+        
+        if progress > 180:
+            print(msg, 'Progress 180')
+            return 1
+        
+        print(msg, 'Default')
+        return 1e-3
+```
+
+### Training
+
+![](images/05-result.png)
+
+![](images/05-track.png)
+
+![](images/05-statistic.png)
+
+![](images/05-action.png)
+
+# Train 06 
+
+```
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        
+        msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, len(waypoints), closest_waypoints)
+        
+        if not hasattr(self, '_max_progress'):
+            self._max_progress = 0
+        
+        if not on_track:
+            print(msg, 'NOT ON Track')
+            return -3
+        
+        if distance_from_center > 0.05:
+            print(msg, 'Distance From Center')
+            return - (distance_from_center + 0.5)
+
+        if self._max_progress < progress:
+            print(msg, 'Max Progress')
+            self._max_progress = progress
+            return 1
+        
+        if progress > 100:
+            print(msg, 'progress 100')
+            return 1
+        
+        if throttle < 0.7 and progress > 5:
+            print(msg, 'Too Slow')
+            return throttle - 1
         
         print(msg, 'Default')
         return 0
