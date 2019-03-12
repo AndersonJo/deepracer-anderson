@@ -82,6 +82,12 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 # Train 04
 
+돌아감. 1바퀴 돌고.. 반바퀴 더 돌때쯤 멈춤. 일단 됨
+
+문제는.. 속도에 대한 보상이 없었으며 progress가 100이 넘어간후 계속 돌때 계속 1점씩 주기 때문에.. 사실은 게임이 완료 되었지만.. 한바퀴 돌고난 이후에 돌때.. 잘못된 행동에도 리워드가 주어졌음. 
+
+[Video 확인](data/03-validation.mp4)
+
 ```
     def reward_function(...):
         msg = '[Anderson] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
@@ -112,7 +118,13 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
         return 0
 ```
 
-# Train 04
+![](images/04-result.png)
+
+![](images/04-track.png)
+
+![](images/04-statistic.png)
+
+# Train 05
 
 ```
     def reward_function(...):
