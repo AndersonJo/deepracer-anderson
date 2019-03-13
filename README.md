@@ -255,3 +255,55 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 ![](images/07-eval-track.png)
 
 ![](images/07-eval-action.png)
+
+# Train 08
+
+```python
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        
+        msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, len(waypoints), closest_waypoints)
+        
+        if not hasattr(self, '_max_progress'):
+            print('SET MAX PROGRESS')
+            self._max_progress = 0
+        
+        if not on_track:
+            print(msg, 'NOT ON Track -1')
+            return -1
+        
+        if self._max_progress < progress and progress >= 100:
+            print(msg, 'Max Progress 1')
+            self._max_progress = progress
+            return 1
+        
+        if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+            print(msg, 'Good Distance 1.0')
+            return 1.0
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            print(msg, 'Good Distance 0.3')
+            return 0.3
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            print(msg, 'Good Distance 0.1')
+            return 0.1
+        
+        if progress > 100 and progress < 110:
+            print(msg, 'progress 100 ~ 110')
+            return 1
+        
+        print(msg, 'Default', -distance_from_center)
+        return -distance_from_center
+```
+
+### Training
+
+![](images/08-result.png)
+
+![](images/08-track.png)
+
+![](images/08-statistic.png)
+
+![](images/08-action.png)
+
