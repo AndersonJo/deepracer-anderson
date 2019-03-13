@@ -224,3 +224,28 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 ![](images/06-action.png)
 
+# Train 07
+
+초기 eval의 경우 한바퀴는 잘 돌고 그 후 실패하는 경향을 보이다가 추가 eval의 경우 실패
+
+```python
+  def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+            return 1.0
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            return 0.3
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            return 0.1
+        return 1e-3  # like crashed
+```
+
+### Training
+
+![](images/07-result.png)
+
+### Evaluation
+
+![](images/07-eval-track.png)
+
+![](images/07-eval-action.png)
