@@ -256,7 +256,11 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 ![](images/07-eval-action.png)
 
-# Train 08
+# Train 08 - 개안됨
+
+잘 안돌아간다. 
+
+안됨 안됨 안됨 안됨
 
 ```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
@@ -307,3 +311,8 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 ![](images/08-action.png)
 
+### Evaluation
+
+![](images/08-eval-track.png)
+
+![](images/08-eval-statistic.png)
