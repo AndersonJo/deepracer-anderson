@@ -184,6 +184,8 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 개안됨. 아마도 속도에다가 reward를 줘서 그런가. 확인 필요함
 
+[동영상](data/06-validation-fail.mp4)
+
 ```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
                         throttle, steering, track_width, waypoints, closest_waypoints):
