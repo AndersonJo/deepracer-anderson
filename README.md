@@ -223,4 +223,3 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 ![](images/06-statistic.png)
 
 ![](images/06-action.png)
-
