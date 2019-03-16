@@ -321,6 +321,81 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 참고는 해볼수 있다. 잘 안된다.. 돌기도 하고.. 대부분.. 탈선. 
 
+```python
+def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                    throttle, steering, track_width, waypoints, closest_waypoints):
+    
+    msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+           on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+           throttle, steering, track_width, len(waypoints), closest_waypoints)
+    
+    import math
+    from statistics import mean
+
+    ##########
+    # Settings
+    ##########
+    # Min / Max Reward
+    REWARD_MIN = -1e5
+    REWARD_MAX = 1e5
+    # Define the Area each side of the center that the card can use.
+    # Later version might consider adjust this so that it can hug corners
+    CENTER_LANE = track_width * .25
+    HALF_TRACK = track_width / 2
+
+    ABS_STEERING_THRESHOLD = .85
+
+    ####################
+    # Locations on track
+    ####################
+
+    # Set Base Reward
+    if not on_track: # Fail them if off Track
+        reward = REWARD_MIN
+        return reward
+    elif progress == 1:
+        reward = REWARD_MAX
+        return reward
+    else:        # we want the vehicle to continue making progress
+        reward = REWARD_MAX * progress
+
+    # If outside track center than penalize
+    if distance_from_center > 0.0 and distance_from_center > CENTER_LANE:
+        reward *= 1 - (distance_from_center / HALF_TRACK)
+
+    ##########
+    # Steering
+    ##########
+    print('----------------------------------------------------------')
+    print('CLOSEST_WAYPOINTS')
+    print(closest_waypoints)
+
+    # Add penalty for wrong direction
+    next_waypoint_yaw = waypoints[min(closest_waypoints+1, len(waypoints)-1)][-1]
+    if abs(car_orientation - next_waypoint_yaw) >= math.radians(10):
+        reward *= 1 - (abs(car_orientation - next_waypoint_yaw) / 180)
+    elif abs(car_orientation - next_waypoint_yaw) < math.radians(10) and abs(steering) > ABS_STEERING_THRESHOLD:    # penalize if stearing to much
+        reward *= ABS_STEERING_THRESHOLD / abs(steering)
+    else:
+        reward *= 1 + (10 - (abs(car_orientation - next_waypoint_yaw) / 10))
+
+    # Add penalty if throttle exsides the steering else add reward
+    if abs(steering) > .5 and abs(steering > throttle):
+        reward *= 1 - (steering - throttle)
+    else:
+        reward *= 1 + throttle
+
+    # make sure reward value returned is within the prescribed value range.
+    reward = max(reward, REWARD_MIN)
+    reward = min(reward, REWARD_MAX)
+
+    return float(reward)
+```
+![](images/09-track.png)
+
+# Train 10
+
+```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
                         throttle, steering, track_width, waypoints, closest_waypoints):
         
@@ -330,64 +405,34 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
         
         import math
         from statistics import mean
-    
-        ##########
-        # Settings
-        ##########
-        # Min / Max Reward
-        REWARD_MIN = -1e5
-        REWARD_MAX = 1e5
+        reward = 0
+
         # Define the Area each side of the center that the card can use.
-        # Later version might consider adjust this so that it can hug corners
-        CENTER_LANE = track_width * .25
-        HALF_TRACK = track_width / 2
-    
-        ABS_STEERING_THRESHOLD = .85
-    
-        ####################
-        # Locations on track
-        ####################
-    
-        # Set Base Reward
-        if not on_track: # Fail them if off Track
-            reward = REWARD_MIN
-            return reward
-        elif progress == 1:
-            reward = REWARD_MAX
-            return reward
-        else:        # we want the vehicle to continue making progress
-            reward = REWARD_MAX * progress
-    
-        # If outside track center than penalize
-        if distance_from_center > 0.0 and distance_from_center > CENTER_LANE:
-            reward *= 1 - (distance_from_center / HALF_TRACK)
-    
-        ##########
-        # Steering
-        ##########
-        print('----------------------------------------------------------')
-        print('CLOSEST_WAYPOINTS')
-        print(closest_waypoints)
-    
-        # Add penalty for wrong direction
+        # Later version might consider adjust this so that it can hug corners        
+        print('-'*60)
+        print(msg)
+        print('waypoints:', waypoints)
+        print('closest_waypoints:', closest_waypoints)
         next_waypoint_yaw = waypoints[min(closest_waypoints+1, len(waypoints)-1)][-1]
-        if abs(car_orientation - next_waypoint_yaw) >= math.radians(10):
-            reward *= 1 - (abs(car_orientation - next_waypoint_yaw) / 180)
-        elif abs(car_orientation - next_waypoint_yaw) < math.radians(10) and abs(steering) > ABS_STEERING_THRESHOLD:    # penalize if stearing to much
-            reward *= ABS_STEERING_THRESHOLD / abs(steering)
-        else:
-            reward *= 1 + (10 - (abs(car_orientation - next_waypoint_yaw) / 10))
-    
-        # Add penalty if throttle exsides the steering else add reward
-        if abs(steering) > .5 and abs(steering > throttle):
-            reward *= 1 - (steering - throttle)
-        else:
-            reward *= 1 + throttle
-    
-        # make sure reward value returned is within the prescribed value range.
-        reward = max(reward, REWARD_MIN)
-        reward = min(reward, REWARD_MAX)
-    
-        return float(reward)
-![](images/09-track.png)
+        print('next_waypoint_yaw:', next_waypoint_yaw)
+        print('-'*60)
+        
+        if not on_track:
+            return -0.1
+        
+        if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+            reward += 1
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            reward += 0.3
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            reward += 0.1
+        
+        reward -= distance_from_center
+        reward += throttle * 0.5
+        
+
+        return reward/1000.
+```
+
+![](images/10-result.png)
 
