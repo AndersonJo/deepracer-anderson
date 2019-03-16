@@ -230,9 +230,11 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 
 ![](images/06-action.png)
 
-# Train 07
+# Train 07 - 기본값. 
 
 초기 eval의 경우 한바퀴는 잘 돌고 그 후 실패하는 경향을 보이다가 추가 eval의 경우 실패
+
+두번째 돌렸는데.. ㅠㅠ 이걸 이기는게 어려움. 
 
 ```python
   def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
@@ -249,6 +251,16 @@ Downloading rl-deepracer-sagemaker-190309-151341/output/intermediate/worker_0.si
 ### Training
 
 ![](images/07-result.png)
+
+두번째 돌려봄
+
+![](images/07-result2.png)
+
+[Training Simulation Job](https://us-east-1.console.aws.amazon.com/robomaker/home?region=us-east-1#simulationJobs/sim-9djwrcj0wnbd)
+
+[Training Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-9djwrcj0wnbd;streamFilter=typeLogStreamPrefix)
+
+
 
 ### Evaluation
 
@@ -437,3 +449,180 @@ https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=
 Validation Log
 
 https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-405mptmqggv4;streamFilter=typeLogStreamPrefix
+
+
+
+# Train 11 - 술취함
+
+차량이 시작부터 좌우로 심하게 움직이면서.. 마치 술취한 것 처럼 달림. 
+
+이는.. 중심점에서 reward를 줬었는데.. 
+
+throttle *0.5 를 하면서, 이 목표가 좀 희석됐다고 생각됨. 
+
+좌우로~ 심하게 움직이면서 술취한것처럼 달림. 
+
+목표를 일단 중심점에 놓아두는것이 첫번째가 되고, 
+
+이후에 속도가 빠르면 reward를 거기에 더해서 좀 더 크게 주고, 
+
+회전구간에서 제대로 좌우 핸들 틀면.. 더  reward를 주는 방식으로 가면 좋지 않을까 생각함. 
+
+이때 중심으로 들어왔을때의 reward가 가장 커야하고.. 
+
+그외는 조금 더 주는 방식? 비율을 좀 맞춰서. 
+
+```
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        
+        msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, len(waypoints), closest_waypoints)
+        
+        import math
+        from statistics import mean
+        reward = 0
+
+        if not on_track:
+            return -0.1
+        
+        if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+            reward += 1
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            reward += 0.3
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            reward += 0.1
+        
+        reward -= distance_from_center
+        reward += throttle * 0.5
+        return reward/1000.
+```
+
+### Training
+
+[Training Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-9h31h3fp4mm7;;streamFilter=typeLogStreamPrefix)
+
+![](images/11-result.png)
+
+
+
+# Train 12 - 코너시 벽에 붙어감 그후 경기장 밖으로 아웃!
+
+회전구간에서 지나치게 벽쪽에 붙어서 간다
+
+첫번째 회전구간통과시 .. 거의 왼쪽 벽에 붙어서 움직인다. 
+
+코너를 모두 돈후.. 직진차로에서 조금 더 가다가.. 좌측으로 조금 더 가서 아웃되면서 죽는다. 
+
+left 를 꺽도록  steering을 할때마다 reward를 주었는데.. 이게 문제인듯 하다
+
+무조건 left만 주면 reward를 좌측으로 꺽는데.. 또 나가면 안되니까.. 거의 벽에 붙어서 간다
+
+steering의 범위를 지정해주는 것이 좋을듯 하다
+
+예를 들어.. 
+
+좌회전 구간에서 좌회전을 주면서 and distance_from_center <= 0.05 이하이면 reward를 주는 방식.. 
+
+즉.. 중앙에서 너무 멀리 나가지 않으면서 좌회적을 하면.. reward를 받음. 
+
+이런식으로 변화를 주면 좋지 않을까 생각됨
+
+트릭 밖으로 나가면 -10으로 했는데. 원래 생각은 -10/100 할려고 했었는데. 깜빡 잊었음. 
+
+```
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoint):
+        
+        import math
+        from statistics import mean
+        reward = 0
+        rewards = []
+        next_index = closest_waypoint + 1
+        if next_index >= len(waypoints) -1:
+            next_index = 0 
+
+        current_waypoint = waypoints[closest_waypoint]
+        next_waypoint = waypoints[next_index]
+        
+        msg = '[Anderson][04] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | cur_wp:{9} {10} -> {11} {12} | car_orientation:{10} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, closest_waypoint, closest_waypoint, 
+               next_index, next_waypoint, car_orientation)
+        
+        if not on_track:
+            print(msg, 'Not On Track')
+            return -10
+        
+        if distance_from_center >= 0.0 and distance_from_center <= 0.01:
+            rewards.append('distance_from_center 0.01')
+            reward += 10
+        elif distance_from_center >= 0.1 and distance_from_center <= 0.02:
+            rewards.append('distance_from_center 0.02')
+            reward += 8
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            rewards.append('distance_from_center 0.03')
+            reward += 5
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            rewards.append('distance_from_center 0.05')
+            reward += 3
+        
+        if closest_waypoint == 0 and throttle >= 0.9:
+            reward += 1
+        elif closest_waypoint == 16 and throttle >= 0.9:
+            reward += 1
+        
+        if closest_waypoint >= 1 and closest_waypoint <= 16 and steering > 0: # Left
+            reward += 1
+           
+        if closest_waypoint >= 21 and closest_waypoint <= 27 and steering > 0: # Left
+            reward += 1
+            
+        if closest_waypoint >= 28 and closest_waypoint <= 29 and steering > 0: # Left
+            reward += 1
+           
+        if throttle >= 0.7:
+            reward += 1
+         
+        reward = reward/100.
+        print(msg, 'Reward:', reward)
+        return reward
+```
+
+### Training
+
+![](images/12-result.png)
+
+[Training Simulation Job](https://us-east-1.console.aws.amazon.com/robomaker/home?region=us-east-1#simulationJobs/sim-pt3dj26cf430)
+
+# Train 13 - 기본 AWS reward 근데! 100 처럼 크게 줌! -> 결론 되던것도 안됨.
+
+- eval episode 1: 첫번째 코너 돌다가. 크래쉬. 
+- eval episode 2: 첫번째 코너 돌다가 또 크래쉬
+- eval episode 3: 첫번째 코너 돌기전에 크래쉬 
+- eval episode 4: 첫번째 코너 돌고.. 다 돈 이후.. 계속 직진하다 크래쉬
+- eval episode 5: 4와 동일
+- eval episode 6: 코너 돌기전에 크래쉬. 
+- eval episode 7: 시작부터. 벽에 붙어서 아슬아슬하게 감.. 헐.. 코너를 도네..(차량이 1/3쯤 나간 상태로 계속 감) 다돌고 크래쉬
+
+**결론.. 값을 크게주면.. 잘 되던것도 잘 안됨**
+
+한번도 돈적이 없음.
+
+
+
+```python
+    def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):
+        if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+            return 100
+        elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+            return 30
+        elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+            return 1
+        return 1e-3  # like crashed
+```
+
+![](images/13-result.png)
+
