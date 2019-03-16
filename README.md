@@ -406,16 +406,6 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
         import math
         from statistics import mean
         reward = 0
-
-        # Define the Area each side of the center that the card can use.
-        # Later version might consider adjust this so that it can hug corners        
-        print('-'*60)
-        print(msg)
-        print('waypoints:', waypoints)
-        print('closest_waypoints:', closest_waypoints)
-        next_waypoint_yaw = waypoints[min(closest_waypoints+1, len(waypoints)-1)][-1]
-        print('next_waypoint_yaw:', next_waypoint_yaw)
-        print('-'*60)
         
         if not on_track:
             return -0.1
@@ -434,5 +424,16 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
         return reward/1000.
 ```
 
+
+
+### Training
+
 ![](images/10-result.png)
 
+Training Log
+
+https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-9h31h3fp4mm7;streamFilter=typeLogStreamPrefix
+
+Validation Log
+
+https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-405mptmqggv4;streamFilter=typeLogStreamPrefix
