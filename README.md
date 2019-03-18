@@ -442,9 +442,15 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
 
 ![](images/10-result.png)
 
+![](images/10-track.png)
+
 Training Log
 
 https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-9h31h3fp4mm7;streamFilter=typeLogStreamPrefix
+
+### Validation
+
+![](images/10-val-track.png)
 
 Validation Log
 
@@ -471,6 +477,8 @@ throttle *0.5 를 하면서, 이 목표가 좀 희석됐다고 생각됨.
 이때 중심으로 들어왔을때의 reward가 가장 커야하고.. 
 
 그외는 조금 더 주는 방식? 비율을 좀 맞춰서. 
+
+
 
 ```
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
@@ -505,6 +513,8 @@ throttle *0.5 를 하면서, 이 목표가 좀 희석됐다고 생각됨.
 
 ![](images/11-result.png)
 
+![](images/11-track.png)
+
 
 
 # Train 12 - 코너시 벽에 붙어감 그후 경기장 밖으로 아웃!
@@ -531,7 +541,7 @@ steering의 범위를 지정해주는 것이 좋을듯 하다
 
 트릭 밖으로 나가면 -10으로 했는데. 원래 생각은 -10/100 할려고 했었는데. 깜빡 잊었음. 
 
-```
+```python
     def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
                         throttle, steering, track_width, waypoints, closest_waypoint):
         
@@ -594,7 +604,11 @@ steering의 범위를 지정해주는 것이 좋을듯 하다
 
 ![](images/12-result.png)
 
+![](images/12-track.png)
+
 [Training Simulation Job](https://us-east-1.console.aws.amazon.com/robomaker/home?region=us-east-1#simulationJobs/sim-pt3dj26cf430)
+
+
 
 # Train 13 - 기본 AWS reward 근데! 100 처럼 크게 줌! -> 결론 되던것도 안됨.
 
