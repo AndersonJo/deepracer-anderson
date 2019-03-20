@@ -640,3 +640,84 @@ steering의 범위를 지정해주는 것이 좋을듯 하다
 
 ![](images/13-result.png)
 
+# Train 14 - 코드 버그 실패
+
+트랙을 벗어났는데도.. on_track은 True가 되어 있었다... 18
+
+코드상의 버그 때문에 실패함. 
+
+```python
+def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                    throttle, steering, track_width, waypoints, closest_waypoint):
+    
+    import math
+    from statistics import mean
+    reward = 0
+    rewards = []
+    next_index = closest_waypoint + 1
+    if next_index >= len(waypoints) -1:
+        next_index = 0 
+
+    current_waypoint = waypoints[closest_waypoint]
+    next_waypoint = waypoints[next_index]
+    
+    msg = '[Anderson][04] xy:{1},{2} | cur_wp:{9} {10} -> {11} {12} | dist:{3} | progress:{4} | throttle:{6} | steps:{5} | st:{7} | width:{8} | car_orientation:{10} | on_track:{0} | '.format(
+           on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+           throttle, steering, track_width, closest_waypoint, closest_waypoint, 
+           next_index, next_waypoint, car_orientation)
+           
+    if not on_track:
+        print(msg, 'Not On Track')
+        return -1
+    
+    if not distance_from_center > 0.07:
+        print(msg, 'Far From Center', distance_from_center)
+        return -1
+    
+    if distance_from_center >= 0.0 and distance_from_center <= 0.02:
+        reward += 70
+    elif distance_from_center >= 0.02 and distance_from_center <= 0.03:
+        reward += 30
+    elif distance_from_center >= 0.03 and distance_from_center <= 0.05:
+        reward += 10
+    
+    if closest_waypoint in [0, 17, 18, 1] and y < 0.8: # 첫번째 직진 코스
+        if throttle >= 0.9 and distance_from_center <= 0.02: # 직진코스에서 속도가 0.9 이상이라면 reward를 더 준다
+            reward += 10
+            
+    if closest_waypoint >= 1 and closest_waypoint <= 16: # 첫번째 좌회전 코스
+        if steering > 0 and distance_from_center <= 0.02: # 좌회전을 하되 중심에서 멀어지지 않았다면.. 
+            reward += 10
+    
+    if closest_waypoint in [16, 17] and y > 1.9 and y < 2.1: # 두번째 직진 코스
+        if throttle >= 0.9 and distance_from_center <= 0.02:
+            reward += 5
+    
+    if closest_waypoint > 19 and closest_waypoint < 27: # 4번째 좌회전 구간
+        if steering > 0 and distance_from_center <= 0.02: # 좌회전을 하되 중심에서 멀어지지 않았다면.. 
+            reward += 5
+    
+    if x >= 0.6 and x <= 1.0 and closest_waypoint in [27, 28, 18]: # 마지막 직선
+        if throttle >= 0.9 and distance_from_center <= 0.02:
+            reward += 10
+        
+    print(msg, 'DEFAULT REWARD:', reward/100.)
+    return reward/100.
+```
+
+[Training Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-g8ch25l92wvn;streamFilter=typeLogStreamPrefix)
+
+[Validation Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-q5v62wnvdp0h;streamFilter=typeLogStreamPrefix)
+
+### Training
+
+![](images/14-result.png)
+
+버그 찾았음.. 
+
+아래 코드에서 not 이 붙어있어서.. 가까이 있을때 -1 reward가 들어갔음
+
+```
+if not distance_from_center > 0.07:
+```
+
