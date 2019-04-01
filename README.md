@@ -835,4 +835,4 @@ Closest waypoint를 찾아서 현재 위치에서 나아가야할 방향과 현�
 
 ### Training
 
-![training-reward](/Users/jude.suh/Downloads/research/autonomonous_driving/aws_contest/deepracer-anderson/images/15-training_reward.png)
+![training-reward](images/15-training_reward.png)
