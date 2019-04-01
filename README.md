@@ -640,11 +640,9 @@ steering의 범위를 지정해주는 것이 좋을듯 하다
 
 ![](images/13-result.png)
 
-# Train 14 - 코드 버그 실패
+# Train 14 
 
-트랙을 벗어났는데도.. on_track은 True가 되어 있었다... 18
 
-코드상의 버그 때문에 실패함. 
 
 ```python
 def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
@@ -670,7 +668,7 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
         print(msg, 'Not On Track')
         return -1
     
-    if not distance_from_center > 0.07:
+    if distance_from_center > 0.07:
         print(msg, 'Far From Center', distance_from_center)
         return -1
     
@@ -705,9 +703,7 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
     return reward/100.
 ```
 
-[Training Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-g8ch25l92wvn;streamFilter=typeLogStreamPrefix)
 
-[Validation Log](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-q5v62wnvdp0h;streamFilter=typeLogStreamPrefix)
 
 ### Training
 
