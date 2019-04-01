@@ -832,3 +832,46 @@ Closest waypoint를 찾아서 현재 위치에서 나아가야할 방향과 현�
 ### Training
 
 ![training-reward](images/15-training_reward.png)
+
+# Train 16 - 7번중에 1번정도 돌아감. 술취함
+
+대충 7번중에 한번정도 돌아가는거 같음.. 아슬아슬하게 운전하고.. 
+
+몇번은 초반 직선에서 시작하자마자 탈선함. 
+
+[동영상](data/16-evaluation.mp4)
+
+```python
+    def reward_function(...):
+        
+        import math
+        from statistics import mean
+        reward = 0
+        rewards = []
+        next_index = closest_waypoint + 1
+        if next_index >= len(waypoints) -1:
+            next_index = 0 
+
+        current_waypoint = waypoints[closest_waypoint]
+        next_waypoint = waypoints[next_index]
+        
+        msg = '[Anderson][04] xy:{1},{2} | cur_wp:{9} {10} -> {11} {12} | dist:{3} | progress:{4} | throttle:{6} | steps:{5} | st:{7} | width:{8} | car_orientation:{10} | on_track:{0} | '.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, closest_waypoint, closest_waypoint, 
+               next_index, next_waypoint, car_orientation)
+        
+        if not on_track:
+            print(msg, 'not on track')
+            return -1
+        
+        print(msg, 'DEFAULT REWARD:', -1 * distance_from_center)
+        
+        return -1 * distance_from_center
+```
+
+### Training
+
+![](images/16-result.png)
+
+![](images/16-track.png)
+
