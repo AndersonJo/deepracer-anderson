@@ -721,3 +721,118 @@ def reward_function(self, on_track, x, y, distance_from_center, car_orientation,
 if not distance_from_center > 0.07:
 ```
 
+
+
+
+
+# JUDE Train 15
+
+Closest waypoint를 찾아서 현재 위치에서 나아가야할 방향과 현재 위치에서의 헤딩을 비교해서 reward 세팅
+
+현재 throttle에 대해서는 reward에 반영이 안되어 있음
+
+```python
+  def reward_function(self, on_track, x, y, distance_from_center, car_orientation, progress, steps,
+                        throttle, steering, track_width, waypoints, closest_waypoints):   
+    
+        msg = '[jude][01] on_track:{0} | xy:{1},{2} | dist:{3} | progress:{4} | steps:{5} | throttle:{6} | st:{7} | width:{8} | waypnt:{9} | clswp:{10} | '.format(
+          on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps,
+          throttle, steering, track_width, len(waypoints), closest_waypoints)
+
+        import math
+        from statistics import mean
+
+       ##########
+       # Settings
+       ##########
+       # Min / Max Reward
+        REWARD_MIN = -1e5
+        REWARD_MAX = 1e5
+
+       ####################
+       # Locations on track
+       ####################
+
+       # Set Base Reward
+        if not on_track: # Fail them if off Track
+            reward = REWARD_MIN
+            return reward
+        elif progress == 1:
+            reward = 1
+            return reward
+        else:        # we want the vehicle to continue making progress
+            reward = REWARD_MAX * progress
+
+        s_id = 0
+        next_id = 0
+
+        if x >= waypoints[0,0] and x <= waypoints[1,0]:
+            if abs(waypoints[0,1] - y) < 0.22:  # 1 s
+                s_id = 1
+                next_way = waypoints[1]
+                next_id = 1
+        elif x >=  waypoints[17,0] and x <= waypoints[16,0]:
+            if abs(waypoints[17,1] - y) <= 0.22:  # 2 s
+                s_id = 2
+                next_way = waypoints[17]
+                next_id = 17
+            elif x >=  waypoints[19,0] and x <= waypoints[18,0]:
+                if y >=  waypoints[16,1] and y <= waypoints[17,1]: # 3s
+                    s_id = 3
+                    next_way = waypoints[19]
+                    next_id = 19
+        elif x >=  waypoints[21,0] and x <= waypoints[20,0]:
+            if abs(waypoints[20,1] - y) <= 0.3:  # 4 s
+                s_id = 4
+                next_way = waypoints[21]
+                next_id = 21
+        elif x >=  waypoints[27,0] and x <= waypoints[28,0]:
+            if y >=  waypoints[28,1] and y <= waypoints[27,1]: # 5s
+                s_id = 5
+                next_way = waypoints[28]
+                next_id = 28;
+
+        if s_id > 0:  # 직선 구간 , throttle 고려
+            dist = math.sqrt((next_way[0] - x)*(next_way[0] - x) + (next_way[1] - y)*(next_way[1] - y))
+            if dist < 0.2:
+                next_id  = next_id + 1
+            next_heading = math.atan2(next_way[1]-y,next_way[0] - x)
+        else: # 회전 구간
+            min_dist = 10000
+            tmp_id = 0
+            for i in range(len(waypoints)):
+                dist = math.sqrt((waypoints[i,0] - x)*(waypoints[i,0] - x) + (waypoints[i,1] - y)*(waypoints[i,1] - y))
+                if dist <= min_dist:
+                    min_dist = dist
+                    tmp_id = i
+
+            if tmp_id == 0 or tmp_id == 16 or tmp_id == 18 or tmp_id == 27:
+                next_id = tmp_id
+            elif tmp_id == 29:
+                next_id = 0
+            else:
+                next_id = tmp_id+1
+
+            next_way = waypoints[next_id]
+            next_heading = math.atan2(next_way[1]-y,next_way[0] - x)
+
+
+        reward = reward * (1-distance_from_center/track_width/2)
+
+       # 현재 heading과 next heading의 차와 steering 비교
+        steering_i = next_heading - car_orientation;
+       #reward = reward * (1-abs(steering_i/pi))
+        if steering * steering_i > 0: # correct control
+            reward = reward * (1- (steering_i/math.pi * steering)*0.7)
+        else: # wrong control
+            reward  = reward * 0.1
+
+       # normalize
+
+        reward = reward/REWARD_MAX
+        return reward
+```
+
+### Training
+
+![training-reward](/Users/jude.suh/Downloads/research/autonomonous_driving/aws_contest/deepracer-anderson/images/15-training_reward.png)
