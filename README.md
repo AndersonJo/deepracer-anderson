@@ -875,3 +875,63 @@ Closest waypoint를 찾아서 현재 위치에서 나아가야할 방향과 현�
 
 ![](images/16-track.png)
 
+# Train 17 - 나름? 잘됨
+
+if self._max_progress < progress 코드에 따라서 리워드를 주는 방식이 핵십이 되는 듯 하다. 
+
+전에.. 이 코드를 빼고서 돌렸을때는.. 잘 안됨.. 그런데.. progress에 따른 리워드를 주자.. 어느정도 돌아감
+
+그리고 progress 는 100넘을때 주는게 아니라.. 기록을 갱신하면 주는게 좋음
+
+[](./data/17-)
+
+```python
+    def reward_function(...):
+        """
+        @param track_width = 0.44
+        """
+        
+        import math
+        from statistics import mean
+        reward = 0
+        rewards = []
+        next_index = closest_waypoint + 1
+        if next_index >= len(waypoints) -1:
+            next_index = 0 
+
+        current_waypoint = waypoints[closest_waypoint]
+        next_waypoint = waypoints[next_index]
+        
+        msg = '[Anderson][04] xy:{1},{2} | cur_wp:{9} {10} -> {11} {12} | dist:{3} | progress:{4} | throttle:{6} | steps:{5} | st:{7} | width:{8} | car_orientation:{10} | on_track:{0} | reward episode:{13}'.format(
+               on_track, x, y, round(distance_from_center, 2), round(progress, 2), steps, 
+               throttle, steering, track_width, closest_waypoint, closest_waypoint, 
+               next_index, next_waypoint, car_orientation, self.reward_in_episode)
+        
+        if not hasattr(self, '_max_progress'):
+            self._max_progress = 0
+           
+        if not on_track:
+            print(msg, 'NOT ON Track')
+            return -1
+        
+        if distance_from_center > 0.05:
+            print(msg, 'Distance From Center')
+            return -1*distance_from_center
+        
+        if self._max_progress < progress:
+            print(msg, 'Max Progress')
+            self._max_progress = progress
+            return 1
+        
+        print(msg, 'Default')
+        return 1-distance_from_center
+```
+
+### Training
+
+![](images/17-result.png)
+
+![](images/17-track.png)
+
+### Validation
+
