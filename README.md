@@ -943,3 +943,21 @@ if self._max_progress < progress 코드에 따라서 리워드를 주는 방식�
 
 ![](images/17-result-12hour-validation.png)
 
+# 18 초간단 - 실수반 돌아감반
+
+대충 돌아감. 트랙 나가기도 하고.. 돌기도 하고.. 
+
+[비디오](data/18-simple-validation-good.mp4)
+
+```python
+def reward_function(...):
+        if not on_track:
+            return -1
+        
+        return -1 * distance_from_center
+```
+
+![](images/18-result.png)
+
+![](images/18-track.png)
+
