@@ -875,7 +875,7 @@ Closest waypoint를 찾아서 현재 위치에서 나아가야할 방향과 현�
 
 ![](images/16-track.png)
 
-# Train 17 - 나름? 잘됨
+# Train 17 - 나름? 잘됨 | 실전 개안됨
 
 if self._max_progress < progress 코드에 따라서 리워드를 주는 방식이 핵십이 되는 듯 하다. 
 
@@ -883,7 +883,9 @@ if self._max_progress < progress 코드에 따라서 리워드를 주는 방식�
 
 그리고 progress 는 100넘을때 주는게 아니라.. 기록을 갱신하면 주는게 좋음
 
-[](./data/17-)
+다음에는.. 좀더 시간을 늘려서 학습한다음에 해봐도 좋을듯
+
+[비디오](./data/17-good.mp4)
 
 ```python
     def reward_function(...):
@@ -927,11 +929,17 @@ if self._max_progress < progress 코드에 따라서 리워드를 주는 방식�
         return 1-distance_from_center
 ```
 
-### Training
+### 5 hour Training
 
 ![](images/17-result.png)
 
 ![](images/17-track.png)
 
-### Validation
+### 12 Hour Training
+
+![](images/17-result-12hour.png)
+
+### 12 Hour Validation
+
+![](images/17-result-12hour-validation.png)
 
