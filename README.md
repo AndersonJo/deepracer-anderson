@@ -1030,6 +1030,8 @@ def reward_function(...):
 
 ![](images/19-result.png)
 
+
+
 # Trian 20 - JUDE Augmented /150
 
 ```python
@@ -1164,6 +1166,12 @@ def reward_function(...):
 [Train Logs](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logStream:group=/aws/robomaker/SimulationJobs;prefix=sim-vnkrc902kd44;streamFilter=typeLogStreamPrefix)
 
 ![](images/20-result.png)
+
+![](images/20-track.png)
+
+
+
+
 
 # Train 21 - Augmented
 
